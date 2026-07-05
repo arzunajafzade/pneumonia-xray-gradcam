@@ -20,7 +20,6 @@ venv/
 ENV/
 
 # Data and model artifacts
-chest_xray/
 netice.png
 
 # Streamlit

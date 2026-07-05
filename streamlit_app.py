@@ -9,30 +9,31 @@ from gradcam import make_gradcam_heatmap, overlay_heatmap
 import os
 
 
-def list_test_images(total=100):
-    """Return up to `total` image file paths from the test folder.
+def list_sample_images(total=100):
+    """Return up to `total` image file paths from sample_images.
 
     The returned list alternates NORMAL and PNEUMONIA samples when possible.
     """
-    test_dir = config.TEST_DIR
-    if not os.path.exists(test_dir):
+    sample_dir = os.path.join(os.path.dirname(__file__), "sample_images")
+    if not os.path.exists(sample_dir):
         return []
 
-    classes = ["NORMAL", "PNEUMONIA"]
-    class_images = {}
-    for cls in classes:
-        cls_path = os.path.join(test_dir, cls)
-        if not os.path.isdir(cls_path):
-            class_images[cls] = []
-            continue
-        class_images[cls] = sorted(
-            os.path.join(cls_path, fname)
-            for fname in os.listdir(cls_path)
-            if fname.lower().endswith((".jpg", ".jpeg", ".png"))
-        )
+    image_files = sorted(
+        fname for fname in os.listdir(sample_dir)
+        if fname.lower().endswith((".jpg", ".jpeg", ".png"))
+    )
 
-    normal_images = class_images["NORMAL"]
-    pneumonia_images = class_images["PNEUMONIA"]
+    normal_images = [
+        os.path.join(sample_dir, fname)
+        for fname in image_files
+        if "virus" not in fname.lower()
+    ]
+    pneumonia_images = [
+        os.path.join(sample_dir, fname)
+        for fname in image_files
+        if "virus" in fname.lower() or "pneumonia" in fname.lower()
+    ]
+
     max_per_class = (total + 1) // 2
     normal_images = normal_images[:max_per_class]
     pneumonia_images = pneumonia_images[:max_per_class]
@@ -75,9 +76,9 @@ model = load_model(model_path)
 if 'selected_path' not in st.session_state:
     st.session_state.selected_path = None
 
-# Sidebar: sample images from test dataset
-st.sidebar.header("Sample images from test set")
-sample_images = list_test_images(total=100)
+# Sidebar: sample images from sample_images directory
+st.sidebar.header("Sample images from sample_images")
+sample_images = list_sample_images(total=100)
 if sample_images:
     for i, (path, label) in enumerate(sample_images):
         try:
@@ -91,7 +92,7 @@ if sample_images:
             # ignore missing/corrupt thumbnails
             continue
 else:
-    st.sidebar.info("No test images found in the configured test directory.")
+    st.sidebar.info("No sample images found in the local sample_images directory.")
 
 # Main area: upload or select
 uploaded = st.file_uploader("Upload X-ray (jpg, png)", type=["jpg", "jpeg", "png"])
