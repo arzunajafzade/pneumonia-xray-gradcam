@@ -18,7 +18,7 @@ This project addresses that gap:
 - **Explains** each prediction with a Grad-CAM heatmap, highlighting the exact lung regions that drove the model's decision
 - **Deployed** as an interactive Streamlit web app — upload an X-ray and get an instant prediction + visual explanation
 
-> ⚠️ **Disclaimer:** This is an educational/portfolio project, not a certified medical device. It has not been clinically validated and should never be used for real diagnostic decisions.
+
 
 ---
 
