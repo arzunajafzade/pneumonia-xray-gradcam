@@ -21,7 +21,6 @@ ENV/
 
 # Data and model artifacts
 chest_xray/
-models/
 netice.png
 
 # Streamlit
